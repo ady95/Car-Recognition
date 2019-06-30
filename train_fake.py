@@ -7,18 +7,18 @@ from keras.callbacks import ReduceLROnPlateau
 
 img_width, img_height = 224, 224
 num_channels = 3
-train_data = r"D:\DATA\car_fake\train"
-valid_data = r"D:\DATA\car_fake\valid"
+train_data = r"E:\DATA\@car\car_fake\train"
+valid_data = r"E:\DATA\@car\car_fake\valid"
 # num_classes = 196
-num_classes = 4
-num_train_samples = 813
-num_valid_samples = 163
+num_classes = 5
+num_train_samples = 874
+num_valid_samples = 178
 
-batch_size = 4
+batch_size = 16
 
 verbose = 1
 num_epochs = 10000
-patience = 5
+patience = 50
 
 if __name__ == '__main__':
     # build a classifier model
