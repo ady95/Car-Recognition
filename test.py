@@ -7,20 +7,24 @@ import numpy as np
 from console_progressbar import ProgressBar
 
 # from utils import load_model
-# from resnet_152 import resnet152_model
-from resnet_50 import resnet50_model
+from resnet_152 import resnet152_model
+# from resnet_50 import resnet50_model
 
-BASE_FOLDER_PATH = r"D:\DATA\car_corlor\valid"
+import common_util
+
+CLASSID_JSON = r"D:\DATA\@car\car_classification\classid_to_folder.json"
+# BASE_FOLDER_PATH = r"D:\DATA\@car\car_classification\valid"
+BASE_FOLDER_PATH = r"D:\DATA\@car\car_classification_google\@TEST"
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 
 def load_model():
-    model_weights_path = 'models/model.25-0.66.hdf5'
+    model_weights_path = 'models/model.33-0.92.hdf5'
     # img_width, img_height = 224, 224
     num_channels = 3
-    num_classes = 13
+    num_classes = 39
     # num_classes = 196
-    # model = resnet152_model(IMG_WIDTH, IMG_HEIGHT, num_channels, num_classes)
-    model = resnet50_model(IMG_WIDTH, IMG_HEIGHT, num_channels, num_classes)
+    model = resnet152_model(IMG_WIDTH, IMG_HEIGHT, num_channels, num_classes)
+    # model = resnet50_model(IMG_WIDTH, IMG_HEIGHT, num_channels, num_classes)
     model.load_weights(model_weights_path, by_name=True)
     return model
 
@@ -30,8 +34,10 @@ def load_model():
 
 if __name__ == '__main__':
     
+    classid_dict = common_util.load_json(CLASSID_JSON)
+
     model = load_model()
-    num_samples = 211
+    num_samples = 527
 
     pb = ProgressBar(total=100, prefix='Predicting test data', suffix='', decimals=3, length=50, fill='=')
     start = time.time()
@@ -47,8 +53,10 @@ if __name__ == '__main__':
                 continue
 
             # filename = os.path.join('data/test', '%05d.jpg' % (i + 1))
+            print(file_path)
             bgr_img = cv2.imread(file_path)
             rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
+
             rgb_img = cv2.resize(rgb_img, dsize=(IMG_WIDTH, IMG_HEIGHT), interpolation=cv2.INTER_AREA)
             rgb_img = np.expand_dims(rgb_img, 0)
 
@@ -58,7 +66,7 @@ if __name__ == '__main__':
             out.write(f'{class_id} {file_path} \n')
             pb.print_progress_bar((i + 1) * 100 / num_samples)
 
-            print(file_path, str(class_id))
+            print(file_path, classid_dict[str(class_id)])
 
             i += 1
 
