@@ -4,21 +4,24 @@ from resnet_50 import resnet50_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import CSVLogger, ModelCheckpoint, EarlyStopping
 from keras.callbacks import ReduceLROnPlateau
+import numpy as np
 
 img_width, img_height = 224, 224
 num_channels = 3
 train_data = r"D:\DATA\car_fake\train"
 valid_data = r"D:\DATA\car_fake\valid"
 # num_classes = 196
-num_classes = 4
-num_train_samples = 813
-num_valid_samples = 163
+num_classes = 3
+num_train_samples = 2432
+num_valid_samples = 492
 
 batch_size = 4
 
 verbose = 1
 num_epochs = 10000
 patience = 5
+
+
 
 if __name__ == '__main__':
     # build a classifier model
@@ -43,12 +46,13 @@ if __name__ == '__main__':
     model_checkpoint = ModelCheckpoint(model_names, monitor='val_acc', verbose=1, save_best_only=False)
     callbacks = [tensor_board, model_checkpoint, csv_logger, early_stop, reduce_lr]
 
-    # generators
-    train_generator = train_data_gen.flow_from_directory(train_data, (img_width, img_height), batch_size=batch_size, classes=['real','lego','media','monitor'],
-                                                         class_mode='categorical')
-    valid_generator = valid_data_gen.flow_from_directory(valid_data, (img_width, img_height), batch_size=batch_size, classes=['real','lego','media','monitor'],
-                                                         class_mode='categorical')
 
+
+    # generators
+    train_generator = train_data_gen.flow_from_directory(train_data,(img_height, img_width), batch_size=batch_size, classes=['real','media','monitor'],
+                                                         class_mode='categorical')
+    valid_generator = valid_data_gen.flow_from_directory(valid_data,(img_height, img_width),  batch_size=batch_size, classes=['real','media','monitor'],
+                                                         class_mode='categorical')
     # fine tune the model
     model.fit_generator(
         train_generator,
