@@ -4,3 +4,5 @@ keras
 pillow
 sklearn
 console-progressbar
+opencv-python
+jupyterlab
