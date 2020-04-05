@@ -6,17 +6,13 @@ import keras.backend as K
 import numpy as np
 from console_progressbar import ProgressBar
 
+from keras.preprocessing.image import ImageDataGenerator
+
 # from utils import load_model
 from resnet_152 import resnet152_model
 # from resnet_50 import resnet50_model
 
-import common_util
-
-CLASSID_JSON = r"D:\DATA\@car\car_classification\classid_to_folder.json"
-# BASE_FOLDER_PATH = r"D:\DATA\@car\car_classification\valid"
-# BASE_FOLDER_PATH = r"D:\DATA\@car\car_classification_google\@TEST"
-# BASE_FOLDER_PATH = r"D:\DATA\@car\car_classification\test_hyundai\20190528"
-BASE_FOLDER_PATH = r"D:\DATA\@car\car_photo\carphoto_20190618"
+BASE_FOLDER_PATH = r"D:\DATA\car_fake\valid"
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 
 def load_model():
@@ -36,10 +32,31 @@ def load_model():
 
 if __name__ == '__main__':
     
-    classid_dict = common_util.load_json(CLASSID_JSON)
-
     model = load_model()
-    num_samples = 81
+    num_samples = 1151
+    img_width, img_height = 224, 224
+    batch_size = 4
+    valid_data = r"D:\DATA\@car\car_classification\valid"
+    valid_data_gen = ImageDataGenerator()
+    valid_generator = valid_data_gen.flow_from_directory(valid_data, (img_width, img_height), batch_size=batch_size,
+                                                         shuffle= False, class_mode='categorical')
+    valid_generator.reset()
+    print("--Predict--")
+    output = model.predict_generator(valid_generator, steps=41, verbose=1)
+    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+    print(valid_generator.class_indices)
+    # print(output)
+    class_label_map = valid_generator.class_indices
+    class_list = list(class_label_map.keys())
+    result=[0,0,0,0]    
+    for res in output:
+        idx = np.argmax(res)
+        print(idx, class_list[idx])
+
+        # result[idx] += 1
+    print(result)
+
+    exit()
 
     pb = ProgressBar(total=100, prefix='Predicting test data', suffix='', decimals=3, length=50, fill='=')
     start = time.time()
@@ -55,20 +72,20 @@ if __name__ == '__main__':
                 continue
 
             # filename = os.path.join('data/test', '%05d.jpg' % (i + 1))
-            print(file_path)
             bgr_img = cv2.imread(file_path)
             rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
-
             rgb_img = cv2.resize(rgb_img, dsize=(IMG_WIDTH, IMG_HEIGHT), interpolation=cv2.INTER_AREA)
             rgb_img = np.expand_dims(rgb_img, 0)
+            # bgr_img = cv2.resize(bgr_img,  dsize=(IMG_WIDTH, IMG_HEIGHT), interpolation= cv2.INTER_AREA)
+            # bgr_img = np.expand_dims(bgr_img, 0)
 
-            preds = model.predict(rgb_img)
+            preds = model.predict(bgr_img)
             prob = np.max(preds)
             class_id = np.argmax(preds)
             out.write(f'{class_id} {file_path} \n')
             pb.print_progress_bar((i + 1) * 100 / num_samples)
 
-            print(file_path, classid_dict[str(class_id)])
+            print(file_path, str(class_id), 'prob: ', preds)
 
             i += 1
 

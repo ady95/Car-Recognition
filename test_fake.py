@@ -12,11 +12,11 @@ from keras.preprocessing.image import ImageDataGenerator
 # from resnet_152 import resnet152_model
 from resnet_50 import resnet50_model
 
-BASE_FOLDER_PATH = r"D:\DATA\car_fake\valid"
+BASE_FOLDER_PATH = r"D:\DATA\@car\car_fake\test"
 IMG_WIDTH, IMG_HEIGHT = 224, 224
 
 def load_model():
-    model_weights_path = 'models/model.09-0.96.hdf5'
+    model_weights_path = 'models/model.09-0.98.hdf5'
     # img_width, img_height = 224, 224
     num_channels = 3
     num_classes = 3
@@ -40,7 +40,7 @@ def random_crop(img, random_crop_size):
 if __name__ == '__main__':
     
     model = load_model()
-    num_samples = 4
+    num_samples = 14
     img_width, img_height = 224, 224
     # batch_size = 4
     # valid_data = r"C:\Users\beyon\Desktop\valid"
@@ -84,15 +84,19 @@ if __name__ == '__main__':
                 # rgb_img = np.expand_dims(rgb_img, 0)
 
                 preds = model.predict(test_img)
+                print(preds)
                 prob = np.max(preds,axis=1)
+                print(prob)
                 class_id_batch = np.argmax(preds, axis=1)
                 bincount = np.bincount(class_id_batch)
                 class_id = np.argmax(bincount)
+                print(class_id_batch)
+                print(bincount)
                 
-                out.write(f'{class_id} {file_path} \n')
-                pb.print_progress_bar((i + 1) * 100 / num_samples)
+                # out.write(f'{class_id} {file_path} \n')
+                # pb.print_progress_bar((i + 1) * 100 / num_samples)
 
-                print(file_path, str(class_id), 'prob: ', preds)
+                print(file_path, str(class_id))
 
                 i += 1
 

@@ -7,12 +7,12 @@ from keras.callbacks import ReduceLROnPlateau
 
 img_width, img_height = 224, 224
 num_channels = 3
-train_data = r"D:\DATA\car_corlor\train"
-valid_data = r"D:\DATA\car_corlor\valid"
+train_data = r"D:\DATA\@car\car_color\@work\train"
+valid_data = r"D:\DATA\@car\car_color\@work\valid"
 # num_classes = 196
 num_classes = 13
-num_train_samples = 1182
-num_valid_samples = 211
+num_train_samples = 1037
+num_valid_samples = 175
 verbose = 1
 batch_size = 16
 num_epochs = 10000

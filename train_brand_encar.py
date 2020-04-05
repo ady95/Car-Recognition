@@ -7,15 +7,18 @@ from keras.callbacks import ReduceLROnPlateau
 
 img_width, img_height = 224, 224
 num_channels = 3
-train_data = r"D:\DATA\@car\car_classification\train"
-valid_data = r"D:\DATA\@car\car_classification\valid"
+train_data = r"D:\DATA\@car\car_brand_encar\train"
+valid_data = r"D:\DATA\@car\car_brand_encar\valid"
 # num_classes = 196
-num_classes = 64
-num_train_samples = 5209
-num_valid_samples = 1160
+# num_classes = 113
+# num_classes = 171
+# num_classes = 255
+num_classes = 261
+num_train_samples = 24029
+num_valid_samples = 6800
 verbose = 1
 batch_size = 16
-num_epochs = 1000
+num_epochs = 200
 patience = 50
 
 if __name__ == '__main__':
@@ -31,12 +34,12 @@ if __name__ == '__main__':
                                         horizontal_flip=True)
     valid_data_gen = ImageDataGenerator()
     # callbacks
-    tensor_board = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=True)
-    log_file_path = 'logs/training.log'
+    tensor_board = keras.callbacks.TensorBoard(log_dir='./logs_brand_encar', histogram_freq=0, write_graph=True, write_images=True)
+    log_file_path = 'logs_brand_encar/training.log'
     csv_logger = CSVLogger(log_file_path, append=False)
     early_stop = EarlyStopping('val_acc', patience=patience)
     reduce_lr = ReduceLROnPlateau('val_acc', factor=0.1, patience=int(patience / 4), verbose=1)
-    trained_models_path = 'models/model'
+    trained_models_path = 'models_brand_encar/model'
     model_names = trained_models_path + '.{epoch:02d}-{val_acc:.2f}.hdf5'
     model_checkpoint = ModelCheckpoint(model_names, monitor='val_acc', verbose=1, save_best_only=True)
     callbacks = [tensor_board, model_checkpoint, csv_logger, early_stop, reduce_lr]
